@@ -20,7 +20,7 @@ class Root(GridLayout):
         super(Root, self).__init__(**kwargs)
 
 
-        Window.size = (GetSystemMetrics(0) - 75, GetSystemMetrics(1))
+        # Window.size = (GetSystemMetrics(0) - 75, GetSystemMetrics(1))
         self.rows = 2
         self.cols = 2
 
@@ -48,6 +48,12 @@ class Root(GridLayout):
 
         cur.execute("select name from sqlite_master where type = 'table';")
         print(cur.fetchall())
+        cur.execute('select * from _types')
+        print(cur.fetchall())
+        cur.execute('select * from projects')
+        print(cur.fetchall())
+        cur.execute('select * from _groups')
+        print(cur.fetchall())
 
         self.tm = Task_Mgmt(conn=conn)
         self.c = Calendar()
@@ -72,7 +78,16 @@ class Root(GridLayout):
 
         self.calendar_tools = GridLayout(rows=1, cols=12, size_hint_y=None, height=40)
         for i in range(1, 13):
-            self.calendar_tools.add_widget(Button(text=str(i)))
+            b = Button(text=str(i))
+            self.calendar_tools.add_widget(b)
+            if i == 1:
+                b.bind(on_press=self.c.print_days)
+                continue
+            if i % 2 != 0:
+                b.bind(on_press=self.c.prev_week)
+            else:
+                b.bind(on_press=self.c.next_week)
+
         self.calendar_area.add_widget(self.calendar_tools)
 
         # task management
